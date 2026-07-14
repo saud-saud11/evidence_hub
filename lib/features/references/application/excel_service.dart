@@ -7,18 +7,16 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../domain/reference_model.dart';
 import '../../../core/services/supabase_service.dart';
+import 'download_helper/download_helper.dart';
 
 class ExcelService {
   Future<void> downloadTemplate() async {
-    // On web or other platforms, we can just launch the asset path if it's served.
-    // However, the best way for a raw file download in Flutter Web without heavy HTML interop
-    // is to either load from root bundle and use web anchor, or just link to the asset.
-    // For simplicity, we can launch the asset URL.
-    final url = Uri.parse('assets/templates/reference_template.xlsx');
-    if (await canLaunchUrl(url)) {
-      await launchUrl(url);
-    } else {
-      throw Exception('Could not download template');
+    try {
+      final data = await rootBundle.load('assets/templates/reference_template.xlsx');
+      final bytes = data.buffer.asUint8List();
+      await triggerDownload(bytes, 'reference_template.xlsx');
+    } catch (e) {
+      throw Exception('Could not download template: $e');
     }
   }
 
