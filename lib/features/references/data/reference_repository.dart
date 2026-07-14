@@ -22,6 +22,7 @@ abstract class ReferenceRepository {
     Function(double progress)? onProgress,
   });
   Future<ReferenceModel> updateReference(ReferenceModel reference);
+  Future<void> bulkAddReferences(List<ReferenceModel> references);
   Future<void> archiveReference(String id);
   Future<void> incrementUsageCount(String id);
   Future<List<ReferenceModel>> getRecentReferences({int limit = 5});
@@ -178,6 +179,21 @@ class SupabaseReferenceRepository implements ReferenceRepository {
         .single();
     
     return ReferenceModel.fromJson(response);
+  }
+
+  @override
+  Future<void> bulkAddReferences(List<ReferenceModel> references) async {
+    if (references.isEmpty) return;
+    
+    final List<Map<String, dynamic>> dataToInsert = references.map((ref) {
+      final json = ref.toJson();
+      json.remove('id');
+      json.remove('created_at');
+      json.remove('updated_at');
+      return json;
+    }).toList();
+
+    await _sb.client.from('references').insert(dataToInsert);
   }
 
   @override
@@ -424,6 +440,19 @@ class MockReferenceRepository implements ReferenceRepository {
 
     _mockReferences.insert(0, newRef);
     return newRef;
+  }
+
+  @override
+  Future<void> bulkAddReferences(List<ReferenceModel> references) async {
+    for (var ref in references) {
+      final newRef = ref.copyWith(
+        id: 'ref-${DateTime.now().millisecondsSinceEpoch}-${_mockReferences.length}',
+        isActive: true,
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
+      );
+      _mockReferences.insert(0, newRef);
+    }
   }
 
   @override

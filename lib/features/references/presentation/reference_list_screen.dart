@@ -10,6 +10,8 @@ import '../../authentication/data/auth_repository.dart';
 import '../../authentication/domain/user_role.dart';
 import '../data/reference_repository.dart';
 import '../domain/reference_model.dart';
+import '../application/excel_service.dart';
+import 'package:file_picker/file_picker.dart';
 
 final referencesListProvider = FutureProvider<List<ReferenceModel>>((ref) {
   final repo = ref.watch(referenceRepositoryProvider);
@@ -33,11 +35,91 @@ class ReferenceListScreen extends ConsumerWidget {
         actions: [
           if (user != null && user.role != UserRole.viewer)
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: ElevatedButton.icon(
                 onPressed: () => context.go('/references/add'),
                 icon: const Icon(Icons.add, size: 18),
                 label: Text(context.tr('addReference')),
+              ),
+            ),
+          if (user != null && user.role == UserRole.admin)
+            Padding(
+              padding: const EdgeInsets.only(right: 8.0),
+              child: PopupMenuButton<String>(
+                icon: const Icon(Icons.more_vert),
+                tooltip: 'Bulk Actions',
+                onSelected: (value) async {
+                  if (value == 'download') {
+                    try {
+                      await ref.read(excelServiceProvider).downloadTemplate();
+                    } catch (e) {
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Error: $e')),
+                        );
+                      }
+                    }
+                  } else if (value == 'upload') {
+                    final result = await FilePicker.platform.pickFiles(
+                      type: FileType.custom,
+                      allowedExtensions: ['xlsx'],
+                      withData: true,
+                    );
+                    if (result != null && result.files.single.bytes != null) {
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Parsing Excel file...')),
+                        );
+                      }
+                      try {
+                        final refs = await ref.read(excelServiceProvider).parseExcelFile(result.files.single.bytes!, user.id);
+                        if (refs.isEmpty) {
+                           if (context.mounted) {
+                             ScaffoldMessenger.of(context).showSnackBar(
+                               const SnackBar(content: Text('No valid references found in the file')),
+                             );
+                           }
+                           return;
+                        }
+                        await ref.read(referenceRepositoryProvider).bulkAddReferences(refs);
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Successfully added ${refs.length} references')),
+                          );
+                          ref.invalidate(referencesListProvider);
+                        }
+                      } catch (e) {
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Error parsing excel: $e')),
+                          );
+                        }
+                      }
+                    }
+                  }
+                },
+                itemBuilder: (context) => [
+                  const PopupMenuItem(
+                    value: 'download',
+                    child: Row(
+                      children: [
+                        Icon(Icons.download, size: 18),
+                        SizedBox(width: 8),
+                        Text('Download Excel Template'),
+                      ],
+                    ),
+                  ),
+                  const PopupMenuItem(
+                    value: 'upload',
+                    child: Row(
+                      children: [
+                        Icon(Icons.upload_file, size: 18),
+                        SizedBox(width: 8),
+                        Text('Bulk Upload via Excel'),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
         ],
