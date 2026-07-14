@@ -55,7 +55,7 @@ class AppTheme {
         onSurface: lightTextPrimary,
       ),
       scaffoldBackgroundColor: lightBg,
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: lightCard,
         elevation: 0,
         margin: EdgeInsets.zero,
@@ -71,7 +71,7 @@ class AppTheme {
         elevation: 0,
         scrolledUnderElevation: 0,
         iconTheme: IconThemeData(color: lightTextPrimary),
-        border: Border(bottom: BorderSide(color: lightBorder)),
+        shape: Border(bottom: BorderSide(color: lightBorder)),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
@@ -135,7 +135,7 @@ class AppTheme {
         onSurface: darkTextPrimary,
       ),
       scaffoldBackgroundColor: darkBg,
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: darkCard,
         elevation: 0,
         margin: EdgeInsets.zero,
@@ -150,7 +150,7 @@ class AppTheme {
         elevation: 0,
         scrolledUnderElevation: 0,
         iconTheme: IconThemeData(color: darkTextPrimary),
-        border: Border(bottom: BorderSide(color: darkBorder)),
+        shape: Border(bottom: BorderSide(color: darkBorder)),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,

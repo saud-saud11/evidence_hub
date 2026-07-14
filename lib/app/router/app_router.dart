@@ -17,9 +17,6 @@ import '../../features/activity_logs/presentation/activity_logs_screen.dart';
 import '../../shared/widgets/app_shell.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
-  // Listen to auth changes
-  final authStream = ref.watch(authStateProvider);
-
   return GoRouter(
     initialLocation: '/',
     refreshListenable: _GoRouterRefreshStream(ref.watch(authRepositoryProvider).authStateChanges),
@@ -106,8 +103,7 @@ class _GoRouterRefreshStream extends ChangeNotifier {
   late final StreamSubscription<dynamic> _subscription;
 
   _GoRouterRefreshStream(Stream<dynamic> stream) {
-    notifyListeners();
-    _subscription = stream.asBroadcastStream().listen((dynamic _) => notifyListeners());
+    _subscription = stream.listen((dynamic _) => notifyListeners());
   }
 
   @override

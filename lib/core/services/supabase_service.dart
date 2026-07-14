@@ -10,8 +10,8 @@ class SupabaseService {
       // Env file not found or failed to load, proceed in mock mode
     }
     
-    final url = dotenv.env['SUPABASE_URL'] ?? '';
-    final anonKey = dotenv.env['SUPABASE_ANON_KEY'] ?? '';
+    final url = dotenv.isInitialized ? (dotenv.env['SUPABASE_URL'] ?? '') : '';
+    final anonKey = dotenv.isInitialized ? (dotenv.env['SUPABASE_ANON_KEY'] ?? '') : '';
     
     if (url.isNotEmpty && 
         anonKey.isNotEmpty && 
@@ -31,8 +31,8 @@ final supabaseServiceProvider = Provider<SupabaseService>((ref) {
 });
 
 final isMockModeProvider = Provider<bool>((ref) {
-  final url = dotenv.env['SUPABASE_URL'] ?? '';
-  final anonKey = dotenv.env['SUPABASE_ANON_KEY'] ?? '';
+  final url = dotenv.isInitialized ? (dotenv.env['SUPABASE_URL'] ?? '') : '';
+  final anonKey = dotenv.isInitialized ? (dotenv.env['SUPABASE_ANON_KEY'] ?? '') : '';
   return url.isEmpty || 
          anonKey.isEmpty || 
          url.contains('your-project.supabase.co') || 
