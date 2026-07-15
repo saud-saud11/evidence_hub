@@ -18,7 +18,7 @@ class SupabaseSnippetRepository implements SnippetRepository {
   @override
   Future<List<EvidenceSnippet>> getSnippetsByReference(String referenceId) async {
     final response = await _sb.client
-        .from('evidence_snippets')
+        .from('snippets')
         .select()
         .eq('reference_id', referenceId)
         .order('created_at');
@@ -33,7 +33,7 @@ class SupabaseSnippetRepository implements SnippetRepository {
     data.remove('updated_at');
 
     final response = await _sb.client
-        .from('evidence_snippets')
+        .from('snippets')
         .insert(data)
         .select()
         .single();
@@ -43,7 +43,7 @@ class SupabaseSnippetRepository implements SnippetRepository {
   @override
   Future<EvidenceSnippet> updateSnippet(EvidenceSnippet snippet) async {
     final response = await _sb.client
-        .from('evidence_snippets')
+        .from('snippets')
         .update(snippet.toJson())
         .eq('id', snippet.id)
         .select()
@@ -54,7 +54,7 @@ class SupabaseSnippetRepository implements SnippetRepository {
   @override
   Future<void> deleteSnippet(String id) async {
     await _sb.client
-        .from('evidence_snippets')
+        .from('snippets')
         .delete()
         .eq('id', id);
   }
@@ -63,7 +63,7 @@ class SupabaseSnippetRepository implements SnippetRepository {
   Future<List<EvidenceSnippet>> searchSnippets(String query) async {
     if (query.trim().isEmpty) return [];
     final response = await _sb.client
-        .from('evidence_snippets')
+        .from('snippets')
         .select()
         .textSearch('search_vector', query.trim(), config: 'english');
     return (response as List).map((s) => EvidenceSnippet.fromJson(s)).toList();
