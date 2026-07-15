@@ -190,6 +190,50 @@ class _ReferenceDetailScreenState extends ConsumerState<ReferenceDetailScreen> {
       }
     }
   }
+  void _deleteReference(ReferenceModel refModel) async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(context.tr('delete')),
+        content: const Text('Are you sure you want to permanently delete this reference?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text(context.tr('cancel')),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            child: Text(context.tr('delete')),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm == true) {
+      try {
+        await ref.read(referenceRepositoryProvider).deleteReference(refModel.id);
+        await ref.read(activityRepositoryProvider).logActivity(
+              action: 'delete_reference',
+              entityType: 'reference',
+              entityId: refModel.id,
+              description: 'Deleted reference "${refModel.title}".',
+            );
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Reference deleted successfully')),
+          );
+          context.go('/references');
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(e.toString()), backgroundColor: Colors.red),
+          );
+        }
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -249,9 +293,15 @@ class _ReferenceDetailScreenState extends ConsumerState<ReferenceDetailScreen> {
               if (showEditActions) ...[
                 IconButton(
                   icon: const Icon(Icons.archive_outlined),
-                  color: Colors.redAccent,
+                  color: Colors.orangeAccent,
                   onPressed: () => _archiveReference(refModel),
                   tooltip: context.tr('archive'),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.delete_outline),
+                  color: Colors.redAccent,
+                  onPressed: () => _deleteReference(refModel),
+                  tooltip: context.tr('delete'),
                 ),
               ],
             ],
