@@ -24,26 +24,24 @@ class UserProfile {
   factory UserProfile.fromJson(Map<String, dynamic> json) {
     return UserProfile(
       id: json['id'] as String,
-      fullName: json['full_name'] as String? ?? 'User',
+      fullName: json['name'] as String? ?? 'User',
       email: json['email'] as String? ?? '',
       role: UserRole.fromString(json['role'] as String? ?? 'viewer'),
       department: json['department'] as String?,
       isActive: json['is_active'] as bool? ?? true,
       createdAt: DateTime.parse(json['created_at'] as String),
-      updatedAt: DateTime.parse(json['updated_at'] as String),
+      updatedAt: json['last_login'] != null ? DateTime.parse(json['last_login'] as String) : DateTime.parse(json['created_at'] as String),
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'full_name': fullName,
+      'name': fullName,
       'email': email,
       'role': role.nameStr,
-      'department': department,
       'is_active': isActive,
-      'created_at': createdAt.toIso8601String(),
-      'updated_at': updatedAt.toIso8601String(),
+      'last_login': updatedAt.toIso8601String(),
     };
   }
 

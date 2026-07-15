@@ -42,7 +42,7 @@ class SupabaseAuthRepository implements AuthRepository {
 
   Future<UserProfile> _fetchProfile(String id) async {
     final response = await _client
-        .from('profiles')
+        .from('users')
         .select()
         .eq('id', id)
         .single();
@@ -91,7 +91,7 @@ class SupabaseAuthRepository implements AuthRepository {
   Future<List<UserProfile>> getAllProfiles() async {
     try {
       final response = await _client
-          .from('profiles')
+          .from('users')
           .select()
           .order('created_at', ascending: false);
       return (response as List).map((p) => UserProfile.fromJson(p)).toList();
@@ -104,7 +104,7 @@ class SupabaseAuthRepository implements AuthRepository {
   Future<void> toggleUserActiveStatus(String userId, bool active) async {
     try {
       await _client
-          .from('profiles')
+          .from('users')
           .update({'is_active': active})
           .eq('id', userId);
     } catch (e) {
@@ -116,7 +116,7 @@ class SupabaseAuthRepository implements AuthRepository {
   Future<void> updateUserRole(String userId, UserRole role) async {
     try {
       await _client
-          .from('profiles')
+          .from('users')
           .update({'role': role.nameStr})
           .eq('id', userId);
     } catch (e) {
