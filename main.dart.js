@@ -52309,7 +52309,7 @@ while(true)switch(s){case 0:p=$.eb().b
 p===$&&A.a()
 o=J
 s=3
-return A.y(p.fj("evidence_snippets").lc(0).ia("reference_id",a).a37(0,"created_at"),$async$vN)
+return A.y(p.fj("snippets").lc(0).ia("reference_id",a).a37(0,"created_at"),$async$vN)
 case 3:q=o.fp(c,new A.aCv(),t.Sy).dj(0)
 s=1
 break
@@ -52326,7 +52326,7 @@ p=$.eb().b
 p===$&&A.a()
 n=A
 s=3
-return A.y(p.fj("evidence_snippets").nG(0,o).lc(0).t3(0),$async$D6)
+return A.y(p.fj("snippets").nG(0,o).lc(0).t3(0),$async$D6)
 case 3:q=n.b1i(c)
 s=1
 break
