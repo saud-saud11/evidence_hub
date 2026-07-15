@@ -62,7 +62,7 @@ class ReferenceListScreen extends ConsumerWidget {
                   } else if (value == 'upload') {
                     final result = await FilePicker.platform.pickFiles(
                       type: FileType.custom,
-                      allowedExtensions: ['xlsx'],
+                      allowedExtensions: ['xlsx', 'csv'],
                       withData: true,
                     );
                     if (result != null && result.files.single.bytes != null) {
@@ -72,7 +72,7 @@ class ReferenceListScreen extends ConsumerWidget {
                         );
                       }
                       try {
-                        final refs = await ref.read(excelServiceProvider).parseExcelFile(result.files.single.bytes!, user.id);
+                        final refs = await ref.read(excelServiceProvider).parseExcelFile(result.files.single.bytes!, result.files.single.name, user.id);
                         if (refs.isEmpty) {
                            if (context.mounted) {
                              ScaffoldMessenger.of(context).showSnackBar(
