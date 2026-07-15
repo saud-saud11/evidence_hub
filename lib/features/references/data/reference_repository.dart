@@ -25,6 +25,7 @@ abstract class ReferenceRepository {
   Future<void> bulkAddReferences(List<ReferenceModel> references);
   Future<void> archiveReference(String id);
   Future<void> deleteReference(String id);
+  Future<void> deleteAllReferences();
   Future<void> incrementUsageCount(String id);
   Future<List<ReferenceModel>> getRecentReferences({int limit = 5});
   Future<List<ReferenceModel>> getMostUsedReferences({int limit = 5});
@@ -222,6 +223,14 @@ class SupabaseReferenceRepository implements ReferenceRepository {
         .from('references')
         .delete()
         .eq('id', id);
+  }
+
+  @override
+  Future<void> deleteAllReferences() async {
+    await _sb.client
+        .from('references')
+        .delete()
+        .neq('id', '00000000-0000-0000-0000-000000000000');
   }
 
   @override
@@ -486,6 +495,11 @@ class MockReferenceRepository implements ReferenceRepository {
   @override
   Future<void> deleteReference(String id) async {
     _mockReferences.removeWhere((r) => r.id == id);
+  }
+
+  @override
+  Future<void> deleteAllReferences() async {
+    _mockReferences.clear();
   }
 
   @override

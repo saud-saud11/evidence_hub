@@ -96,6 +96,42 @@ class ReferenceListScreen extends ConsumerWidget {
                         }
                       }
                     }
+                  } else if (value == 'delete_all') {
+                    final confirm = await showDialog<bool>(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: Text(context.tr('delete')),
+                        content: const Text('Are you sure you want to permanently delete ALL references? This action cannot be undone.'),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.of(context).pop(false),
+                            child: Text(context.tr('cancel')),
+                          ),
+                          ElevatedButton(
+                            onPressed: () => Navigator.of(context).pop(true),
+                            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                            child: Text(context.tr('delete')),
+                          ),
+                        ],
+                      ),
+                    );
+                    if (confirm == true) {
+                      try {
+                        await ref.read(referenceRepositoryProvider).deleteAllReferences();
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('All references deleted successfully')),
+                          );
+                          ref.invalidate(referencesListProvider);
+                        }
+                      } catch (e) {
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+                          );
+                        }
+                      }
+                    }
                   }
                 },
                 itemBuilder: (context) => [
@@ -116,6 +152,16 @@ class ReferenceListScreen extends ConsumerWidget {
                         Icon(Icons.upload_file, size: 18),
                         SizedBox(width: 8),
                         Text('Bulk Upload via Excel'),
+                      ],
+                    ),
+                  ),
+                  const PopupMenuItem(
+                    value: 'delete_all',
+                    child: Row(
+                      children: [
+                        Icon(Icons.delete_forever, size: 18, color: Colors.red),
+                        SizedBox(width: 8),
+                        Text('Delete All References', style: TextStyle(color: Colors.red)),
                       ],
                     ),
                   ),
