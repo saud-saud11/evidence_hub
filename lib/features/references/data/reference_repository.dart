@@ -63,13 +63,13 @@ class SupabaseReferenceRepository implements ReferenceRepository {
       rpcQuery = rpcQuery.eq('category_id', categoryId);
     }
     if (type != null && type.isNotEmpty) {
-      rpcQuery = rpcQuery.eq('reference_type', type);
+      rpcQuery = rpcQuery.ilike('reference_type', '%$type%');
     }
     if (year != null) {
       rpcQuery = rpcQuery.eq('publication_year', year);
     }
     if (language != null && language.isNotEmpty) {
-      rpcQuery = rpcQuery.eq('language', language);
+      rpcQuery = rpcQuery.ilike('language', '%$language%');
     }
 
     // Apply search query
@@ -375,13 +375,13 @@ class MockReferenceRepository implements ReferenceRepository {
       list = list.where((r) => r.categoryId == categoryId);
     }
     if (type != null && type.isNotEmpty) {
-      list = list.where((r) => r.referenceType == type);
+      list = list.where((r) => r.referenceType.toLowerCase().contains(type.toLowerCase()));
     }
     if (year != null) {
       list = list.where((r) => r.publicationYear == year);
     }
     if (language != null && language.isNotEmpty) {
-      list = list.where((r) => r.language == language);
+      list = list.where((r) => r.language.toLowerCase().contains(language.toLowerCase()));
     }
 
     if (query != null && query.trim().isNotEmpty) {
