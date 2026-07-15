@@ -71,13 +71,8 @@ class MockFavoriteRepository implements FavoriteRepository {
 }
 
 final favoriteRepositoryProvider = Provider<FavoriteRepository>((ref) {
-  final isMock = ref.watch(isMockModeProvider);
-  if (isMock) {
-    return MockFavoriteRepository();
-  } else {
-    final sb = ref.watch(supabaseServiceProvider);
-    return SupabaseFavoriteRepository(sb);
-  }
+  final sb = ref.watch(supabaseServiceProvider);
+  return SupabaseFavoriteRepository(sb);
 });
 
 // A family provider to check favorite status dynamically

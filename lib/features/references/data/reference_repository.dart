@@ -489,11 +489,6 @@ class MockReferenceRepository implements ReferenceRepository {
 }
 
 final referenceRepositoryProvider = Provider<ReferenceRepository>((ref) {
-  final isMock = ref.watch(isMockModeProvider);
-  if (isMock) {
-    return MockReferenceRepository();
-  } else {
-    final sb = ref.watch(supabaseServiceProvider);
-    return SupabaseReferenceRepository(sb);
-  }
+  final sb = ref.watch(supabaseServiceProvider);
+  return SupabaseReferenceRepository(sb);
 });

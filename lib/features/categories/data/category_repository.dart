@@ -195,13 +195,8 @@ class MockCategoryRepository implements CategoryRepository {
 }
 
 final categoryRepositoryProvider = Provider<CategoryRepository>((ref) {
-  final isMock = ref.watch(isMockModeProvider);
-  if (isMock) {
-    return MockCategoryRepository();
-  } else {
-    final sb = ref.watch(supabaseServiceProvider);
-    return SupabaseCategoryRepository(sb);
-  }
+  final sb = ref.watch(supabaseServiceProvider);
+  return SupabaseCategoryRepository(sb);
 });
 
 final categoriesProvider = FutureProvider<List<CategoryModel>>((ref) {

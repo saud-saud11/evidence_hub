@@ -244,13 +244,8 @@ class MockAuthRepository implements AuthRepository {
 
 // Riverpod Provider
 final authRepositoryProvider = Provider<AuthRepository>((ref) {
-  final isMock = ref.watch(isMockModeProvider);
-  if (isMock) {
-    return MockAuthRepository();
-  } else {
-    final supabase = ref.watch(supabaseServiceProvider);
-    return SupabaseAuthRepository(supabase.client);
-  }
+  final supabase = ref.watch(supabaseServiceProvider);
+  return SupabaseAuthRepository(supabase.client);
 });
 
 // Current User Provider

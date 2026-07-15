@@ -268,11 +268,6 @@ class MockSnippetRepository implements SnippetRepository {
 }
 
 final snippetRepositoryProvider = Provider<SnippetRepository>((ref) {
-  final isMock = ref.watch(isMockModeProvider);
-  if (isMock) {
-    return MockSnippetRepository();
-  } else {
-    final sb = ref.watch(supabaseServiceProvider);
-    return SupabaseSnippetRepository(sb);
-  }
+  final sb = ref.watch(supabaseServiceProvider);
+  return SupabaseSnippetRepository(sb);
 });

@@ -115,11 +115,6 @@ class MockActivityRepository implements ActivityRepository {
 }
 
 final activityRepositoryProvider = Provider<ActivityRepository>((ref) {
-  final isMock = ref.watch(isMockModeProvider);
-  if (isMock) {
-    return MockActivityRepository(ref);
-  } else {
-    final sb = ref.watch(supabaseServiceProvider);
-    return SupabaseActivityRepository(sb, ref);
-  }
+  final sb = ref.watch(supabaseServiceProvider);
+  return SupabaseActivityRepository(sb, ref);
 });
